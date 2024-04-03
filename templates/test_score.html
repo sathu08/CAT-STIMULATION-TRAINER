@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decorated Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0B699A;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+        header {
+            background-color: #0c3d60;
+            color: #fff;
+            text-align: center;
+            font-size: 24px;
+            padding: 10px;
+            border-radius: 5px;
+            width: 98.8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Center vertically */
+        }
+
+        header img {
+            max-width: 110px;
+            margin-left: 20px; /* Adjust the margin to position the image */
+        }
+        .container {
+           margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+
+        }
+
+        h1, p {
+            font-size: 24px;
+            color: #fff; /* Text color is blue */
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px 20px;
+            background-color: #0c3d60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .right-section {
+
+            background-color: #0B699A;
+            padding: 20px;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        .model-variable {
+            text-align: center;
+            display: block;
+            margin: 0 auto;
+            font-size: 24px;
+            color: #fdfdfd;
+        }
+    </style>
+</head>
+<body>
+<header>
+        VISION TEST STIMULATION
+        <img src="../static/Visteon_wordmark_white.png" alt="Header Image">
+    </header>
+<span class="model-variable">{{ model }}</span>
+    <div class="container">
+        <div class="right-section">
+        <h1>Thank You</h1>
+        <p>Score: {{ score }}</p>
+            <label>
+                <input value="Log Off" type="submit" onclick="logOff('logout')">
+            </label>
+        </div>
+    </div>
+
+
+    <script>
+        function logOff(url) {
+            // Add your logoff logic here
+            alert("You have been logged off.");
+            window.location.href = url;
+            // You can redirect the user to a logout page or perform any other necessary actions.
+        }
+        window.onload = startCountdown;
+        window.history.pushState(null, null, document.URL);
+        window.addEventListener('popstate', function () {
+        window.history.pushState(null, null, document.URL);
+        });
+
+        window.onbeforeunload = function() {
+        return "You have unsaved changes. Are you sure you want to leave this page?";
+        };
+    </script>
+</body>
+</html>

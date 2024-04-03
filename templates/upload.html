@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Face with ID</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0B699A;
+        }
+        header {
+           background-color: #0c3d60;
+            color: #fff;
+            font-size: 24px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            height: 55px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header img {
+            max-width: 110px;
+            margin-left: 20px;
+        }
+        input[type="file"] {
+            width: 100%;
+            padding: 10px 5px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px 20px;
+            background-color: #0c3d60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            background-color: #0c3d60;
+            color: white;
+            width: 100%;
+            font-weight: bold;
+        }
+        .container {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+        }
+        .custom-button {
+            background-color: #0c3d60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 10px 20px;
+            font-size: 24px;
+        }
+        .model-variable {
+            text-align: center;
+            display: block;
+            margin: 0 auto;
+            font-size: 24px;
+            color: #fdfdfd;
+        }
+    </style>
+</head>
+<body>
+<header>
+        <button class="custom-button" onclick="redirectTo('{{ url_for('admin_page') }}')">VISION TEST STIMULATION</button>
+        <button class="custom-button" onclick="redirectTo('{{ url_for('edit_models') }}')">Edit Model</button>
+        <button class="custom-button" onclick="redirectTo('{{ url_for('create_account') }}')">Create Account</button>
+        <button class="custom-button" onclick="redirectTo('{{ url_for('reports') }}')">Report</button>
+        <img src="../static/Visteon_wordmark_white.png" alt="Header Image">
+    </header>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <span class="model-variable">{{ model }}</span>
+                <h1 class="text-center">Upload Image</h1>
+                <hr>
+                <form method="POST" action="{{ url_for('upload_image', model=model) }}" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="image">Select image</label>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" name="image" id="image">
+                            <label class="custom-file-label" for="image">Choose file...</label>
+                        </div>
+                    </div>
+                    <input type="submit" value="Upload">
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+ <script>
+        function redirectTo(url) {
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>

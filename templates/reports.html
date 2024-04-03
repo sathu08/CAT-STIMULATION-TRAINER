@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report</title>
+    <style>
+       body {
+            background-color: #0B699A;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 30px;
+            display: flex;
+            color: white;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+        }
+
+        /* Title Styles */
+        .title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #E57200; /* Blue title color */
+        }
+
+        /* Form Styles */
+        form {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            background-color: #OC3DGO;
+            padding: 20px;
+            text-align: center;
+            margin-top: 0;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        button[type="submit"] {
+            background-color: #0c3d60;
+            margin-left: 355px;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #0c3d60;
+            color: white;
+        }
+
+        /* Table Row Hover Effect */
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Delete Button Styles */
+        .delete-form {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .delete-form img {
+            max-width: 30%;
+            margin-right: 10px;
+        }
+
+        .delete-form label {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+
+       /* Decorative Button Styles */
+        .decorative-button {
+            background-color: #0c3d60; /* Green background color */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        header {
+            background-color: #0c3d60;
+            color: #fff;
+            font-size: 24px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            height: 25px;
+            width: 98.38%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Center vertically */
+        }
+
+        header img {
+            max-width: 110px;
+            margin-left: 20px;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            width: 1200px;
+            height: 400px;
+        }
+        .custom-button {
+            background-color: #0c3d60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 0 5px;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+<header>
+        <button class="custom-button" onclick="redirectTo('admin_page')">VISION TEST STIMULATION</button>
+        <button class="custom-button" onclick="redirectTo('admin_home_page')">Add New Model</button>
+        <button class="custom-button" onclick="redirectTo('edit_models')">Edit Model</button>
+         <button class="custom-button" onclick="redirectTo('create_account')">Create Account</button>
+    <img src="../static/Visteon_wordmark_white.png" alt="Header Image">
+</header>
+<div class="container">
+    <div class="title">
+    </div>
+    <form action="/reports" method="post">
+        <h1>REPORT</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <label><input type="text" name="messages" id='messages' placeholder="Search here ..." value=""></label>
+        <button type="submit">Submit</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>S.NO</th>
+            <th>USERNAME</th>
+            <th>NAME</th>
+            <th>TEST DATE</th>
+            <th>MODEL NAME</th>
+            <th>SCORE</th>
+            <TH>TOTAL</TH>
+            <th>IMAGE</th>
+        </tr>
+        <button id="download-btn" class="decorative-button">Download CSV</button>
+        </thead>
+        <tbody>
+        {% for reports in report_details %}
+        <tr>
+            <td>{{ reports[0] }}</td>
+            <td>{{ reports[1] }}</td>
+            <td>{{ reports[8] }}</td>
+            <td>{{ reports[2] }}</td>
+            <td>{{ reports[3] }}</td>
+            <td>{{ reports[4] }}</td>
+            <td>{{ reports[5] }}</td>
+            <td>
+            <div class="popup" id="popup">
+                <img src="{{url_for('static', filename='/test_photos/' + reports[6])  }}" alt="Report Image" width="90%">
+                <input type="button" value="Close" onclick="closePopup()">
+            </div>
+                <img onclick="openPopup()" src="{{url_for('static', filename='/test_photos/' + reports[6])  }}" alt="Report Image" width="200">
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+    <script>
+        function downloadCSV() {
+        var table = document.querySelector("table");
+        var csv = "S.NO,USERNAME,NAME,TEST DATE,MODEL NAME,SCORE,TOTAL\n";
+        var rows = table.querySelectorAll("tr");
+        for (var i = 1; i < rows.length; i++) {
+            var row = rows[i].querySelectorAll("td");
+            for (var j = 0; j < row.length; j++) {
+                csv += row[j].textContent + ",";
+            }
+            csv += "\n";
+        }
+        var blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement("a");
+        a.style.display = "none";
+        a.href = url;
+        a.download = "report.csv";
+        document.body.appendChild(a);
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+    document.getElementById("download-btn").addEventListener("click", downloadCSV);
+        function openPopup() {
+            var popup = document.getElementById('popup');
+            popup.style.display = 'block';
+        }
+        function closePopup() {
+            var popup = document.getElementById('popup');
+            popup.style.display = 'none';
+        }
+
+        function redirectTo(url) {
+            window.location.href = url;
+        }
+
+    </script>
+</body>
+</html>

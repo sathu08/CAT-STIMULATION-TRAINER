@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Page</title>
+    <style>
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #0B699A;
+            margin: 0;
+            padding: 0;
+            color: white;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #0c3d60;
+            color: #fff;
+            font-size: 24px;
+            text-align: center;
+            padding:  10px;
+            border-radius: 5px;
+            width: 98.38%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Center vertically */
+        }
+        header img {
+            max-width: 110px;
+            margin-left: 20px; /* Adjust the margin to position the image */
+            margin-top: 2px;
+        }
+
+        /* Container for the entire content */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+
+        }
+        .model-variable {
+            text-align: center;
+            display: block;
+            margin: 0 auto;
+            font-size: 24px;
+            color: #fdfdfd;
+        }
+
+        /* Form Styles */
+        form {
+            background-color: #7D9EAD;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            background-color:#0c3d60 ;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-top: 0;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 90%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button[type="submit"] {
+            background-color: #0c3d60;;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Image Styles */
+        img {
+            max-width: 100%;
+            margin-top: 20px;
+        }
+
+        /* Update Button Styles */
+        .edit-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .loginID {
+            display: flex;
+            align-items: center; /* Align the login ID vertically with the header image */
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js">
+	</script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js">
+	</script>
+	<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css"
+		rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <header>
+        VISION TEST STIMULATION
+        <div class="loginID">
+        {{ user_name }}
+    </div>
+        {{ model }}
+        <img src="../static/Visteon_wordmark_white.png" alt="Header Image">
+    </header>
+    <div class="container">
+        <form method="POST" action="{{ url_for('take_test', model=model) }}" enctype="multipart/form-data">
+            <h1>Test Page</h1>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+            {% endif %}
+            {% endwith %}
+                <label for="messages">Enter Model  Name:</label>
+                <input type="text" name="messages" id="messages" placeholder="Search here ..." value="">
+                <button type="submit">Submit</button>
+        </form>
+        {% if test_details %}
+    {{ model }}
+    <p>{{ test_details[0] }}</p>
+    <img src="{{ url_for('static', filename='/test_photos/' + file_name)}}" alt="">
+    <button type="button" class="edit-button" onclick="redirectToModelTest('{{ url_for('model_test', model=model) }}')">Next</button>
+{% endif %}
+
+    </div>
+    <script>
+
+        function redirectToModelTest(url) {
+            window.location.href = url;
+        }
+        $( function() {
+            var availableTags = [
+                {% for language in languages %}
+                    "{{language}}",
+                {% endfor %}
+            ];
+            $( "#messages" ).autocomplete({
+                source: availableTags
+            });
+        } );
+    </script>
+</body>
+</html>

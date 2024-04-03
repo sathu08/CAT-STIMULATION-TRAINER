@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEST APPLICATION</title>
+    <style>
+        body {
+            background-color: #0B699A;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border-radius: 0;
+        }
+        h1, p {
+            color: #000;
+            text-align: center;
+        }
+
+        .company-name {
+            color: #0c3d60;
+        }
+
+        .button {
+            margin: 10px;
+            padding: 0;
+            width: 200px;
+            height: 50px;
+            font-size: 18px;
+            text-align: center;
+            background-color: #0B699A;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #0c3d60;
+        }
+        header {
+            background-color: #0c3d60;
+            color: #E57200;
+            font-size: 24px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            height: 25px;
+            width: 98.8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header img {
+            max-width: 110px;
+            margin-left: 20px;
+        }
+        .custom-button {
+            background-color: #0c3d60;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 0 5px;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <button class="custom-button" onclick="redirectTo('admin_page')">VISION TEST STIMULATION</button>
+    <img src="../static/Visteon_wordmark_white.png" alt="Header Image">
+</header>
+    <div class="button-container">
+        <h1><span class="company-name"></span></h1>
+        <p></p>
+        <form method="post">
+    <button class="button" name="cat" value="cat" >Add CAT New Model</button>
+    <button class="button" name="aoi" value="aoi" >Add AOI New Model</button>
+</form>
+    </div>
+    <script>
+        function redirectTo(url) {
+            window.location.href = url;
+        }
+
+
+    </script>
+</body>
+</html>

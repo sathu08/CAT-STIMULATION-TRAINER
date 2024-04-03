@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Click on Image to Mark Defect Areas</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #0A699A;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .left-section {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .image-container {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .description-container {
+            text-align: center;
+        }
+
+        .right-section {
+            flex: 1;
+            background-color: #F7F7F7;
+            padding: 20px;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 5px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px 20px;
+            background-color: #0c3d60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #coordinates-table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        #coordinates-table th, #coordinates-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        #coordinates-table th {
+            background-color: #0c3d60;
+            color: #fff;
+        }
+
+        header {
+            background-color: #0c3d60;
+            color: #fff;
+            font-size: 24px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            width: 98.8%;
+            height: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Center vertically */
+        }
+
+        header img {
+            max-width: 110px;
+            margin-left: 20px; /* Adjust the margin to position the image */
+        }
+        .container {
+            margin-top: 30px;
+            background-color: #0A699A;
+            border-radius: 5px;
+            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            max-width: 1400px;
+            width: 90%;
+            min-height: 50vh;
+        }
+        .custom-button {
+            background-color: #0c3d60;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            padding: 0 20px;
+            font-size: 24px;
+        }
+        .model-variable {
+            text-align: center;
+            display: block;
+            margin: 0 auto;
+            font-size: 24px;
+            color: #fdfdfd;
+        }
+    </style>
+</head>
+<body>
+<header>
+        <button class="custom-button" onclick="redirectTo('{{ url_for('admin_page') }}')">VISION TEST STIMULATION</button>
+        <button class="custom-button" onclick="redirectTo('{{ url_for('admin_home_page') }}')">Add New Model</button>
+        <button class="custom-button" onclick="redirectTo('{{ url_for('edit_models') }}')">Edit Model</button>
+        <img src="../static/Visteon_wordmark_white.png" alt="Header Image">
+    </header>
+<span class="model-variable">{{ model }}</span>
+<div class="container">
+
+    <div class="left-section">
+        <h1>Click on the Image to Mark Defect Areas</h1>
+        <div class="image-container">
+            <label for="model"></label>
+            <input type="text" id="model" value={{model}} name="model"  style="display: none;" >
+            <!-- Add a unique timestamp as a query parameter to the image source -->
+            <img id="image" src="{{ url_for('static', filename='/upload/'+ uploaded_image) }}?t=<%= Date.now() %>" alt="Image">
+            <div id="circle-container"></div> <!-- Container for circular shapes -->
+        </div>
+<!--{#        <button id="addDescriptionButton">Add Description & Refresh Image</button> &lt;!&ndash; Combined button &ndash;&gt;#}-->
+        <form action="/cat_stimulation/static" method="post" id="descriptionForm" class="description-container">
+            <label for="description">Description:</label>
+            <input type="text" id="description" name="description" required>
+
+            <!-- Add the Defect Area label and input field below -->
+            <label for="defectArea">Defect Area:</label>
+            <input type="text" id="defectArea" name="defectArea">
+            <!-- Hide the original "Add Description" button -->
+            <input type="submit" id="addDescriptionButton" value="Add Description">
+<!--{#            <button id="addDescriptionButton">Add Description & Refresh Image</button>#}-->
+            <input type="submit" value="Add Description" style="display: none;">
+        </form>
+    </div>
+
+    <div class="right-section">
+        <table id="coordinates-table">
+            <thead>
+                <tr>
+                    <th>Point</th>
+                    <th>X</th>
+                    <th>Y</th>
+                    <th>Description</th>
+                    <th>Defect Area</th>
+                </tr>
+            </thead>
+            <tbody id="coordinatesBody">
+                <!-- Table body content will be generated dynamically -->
+            </tbody>
+        </table>
+    </div>
+</div>
+    <script>
+        var image = document.getElementById('image');
+        var addDescriptionButton = document.getElementById('addDescriptionButton');
+        var coordinatesDiv = document.getElementById('coordinates');
+        var descriptionForm = document.getElementById('descriptionForm');
+        var coordinatesTable = document.getElementById('coordinates-table');
+        var circleContainer = document.getElementById('circle-container'); // Added for circular shapes
+
+        var coordinatesList = []; // Store coordinates in an array
+
+        // Initially, disable the image click event
+        var imageClickEnabled = false;
+
+        // Function to enable or disable the image click event based on the description input field value
+        function updateImageClickState() {
+            var inputElement = document.getElementById('description');
+            var value = inputElement.value;
+            imageClickEnabled = !!value; // Enable the click event if there's a value
+        }
+
+        image.addEventListener('click', function (event) {
+            if (imageClickEnabled) {
+                var x = event.offsetX;
+                var y = event.offsetY;
+                var inputElement = document.getElementById('description');
+                var value = inputElement.value;
+                var defectArea = document.getElementById('defectArea').value;
+                var model = document.getElementById('model').value;
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/click',
+                    data: JSON.stringify({ x: x, y: y, value: value, defectArea: defectArea,model:model }),
+                    contentType: 'application/json',
+                    success: function (data) {
+                        coordinatesList.push({ x: data.x, y: data.y, value: data.value, defectArea: data.defectArea, error: "" });
+
+                        // Create a new circular shape (circle) and associate it with the defect area
+                        var circle = document.createElement('div');
+                        circle.classList.add('circle');
+                        circle.style.left = x + 'px';
+                        circle.style.top = y + 'px';
+                        circleContainer.appendChild(circle);
+
+                        displayCoordinates(coordinatesList);
+                    }
+                });
+            }
+        });
+
+        // Add a click event listener for the combined button
+        addDescriptionButton.addEventListener('click', function () {
+            // Reload the image by changing its source (this will refresh the image)
+            image.src = "{{ url_for('static', filename='/upload/' + uploaded_image) }}?t=" + Date.now();
+
+            var description = document.getElementById('description').value;
+            var defectArea = document.getElementById('defectArea').value;
+
+            if (coordinatesList.length > 0) {
+                coordinatesList[coordinatesList.length - 1].description = description;
+                coordinatesList[coordinatesList.length - 1].defectArea = defectArea;
+                displayCoordinates(coordinatesList);
+                document.getElementById('description').value = ""; // Clear the input field
+                document.getElementById('defectArea').value = ""; // Clear the Defect Area field
+                updateImageClickState(); // Disable the image click event again
+            }
+        });
+
+        descriptionForm.addEventListener('input', function (event) {
+            updateImageClickState(); // Update the image click state whenever the input field changes
+        });
+
+        function displayCoordinates(coordinates) {
+            var coordinatesBody = document.getElementById('coordinatesBody');
+
+            // Clear the table body before populating it with new data
+            coordinatesBody.innerHTML = "";
+
+            coordinates.forEach(function (coord, index) {
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                  <td>${index + 1}</td>
+                  <td>${coord.x}</td>
+                  <td>${coord.y}</td>
+                  <td>${coord.description}</td>
+                  <td>${coord.defectArea}</td>
+                `;
+                coordinatesBody.appendChild(row);
+            });
+
+            coordinatesTable.style.display = 'block';
+        }
+        function redirectTo(url) {
+            window.location.href = url;
+        }
+    </script>
+</body>
+</html>

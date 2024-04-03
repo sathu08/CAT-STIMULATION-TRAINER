@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background-image: url('../static/background1.jpg'); /* Replace 'background.jpg' with the actual image file path */
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed; /* This keeps the background fixed while scrolling */
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            background-color: #0c3d60;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .header_body {
+            font-size: 24px;
+            font-weight: bold;
+            color: white; /* Set the color to orange */
+            margin-bottom: 20px;
+        }
+
+        .header1 {
+           position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+
+        .header1 img {
+            max-width: 80px;
+            margin-right: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: bold;
+        }
+
+        .input-group input {
+            width: 90%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .input-group button {
+            background-color: #0B699A;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .input-group button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="header1">
+        <img src="../static/Visteon_wordmark_white.png" alt="Top Left Image" width="100" height="50">
+    </div>
+    <div class="container">
+        <div class="header_body">
+            VISION TEST STIMULATION
+        </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <form action="/login" method="POST">
+            <div class="input-group">
+                <label for="username">
+                    <i class="fas fa-user"></i>Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">
+                    <i class="fas fa-user"></i>Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="input-group">
+                <button type="submit">Login</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="">
+<head>
+    <style>
+        body {
+            background-color: #0B699A;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 90vh;
+        }
+        form {
+            max-width: 800px;
+            width: 100%;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button[type="submit"] {
+            background-color: #0c3d60;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 20px; /* Add space between "Submit" and table */
+            margin-left: 355px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #0c3d60;
+            color: white;
+        }
+
+        header {
+            background-color: #0c3d60;
+            color: #fff;
+            text-align: center;
+            font-size: 24px;
+            padding: 10px;
+            border-radius: 10px 5px;
+            height: 25px;
+            width: 98.40%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center; /* Center vertically */
+        }
+
+        header img {
+            max-width: 100px;
+            margin-left: 20px; /* Adjust the margin to position the image */
+        }
+        tr:hover {
+            background-color:#7D9EAD
+        }
+
+        /* Delete Button Styles */
+        .delete-form {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .delete-form img {
+            max-width: 30%;
+            margin-right: 10px;
+        }
+
+        .delete-form label {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .delete-button {
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .edit-button {
+            background-color: #0B699A;
+            display: inline-block;
+            margin: 10px auto;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .custom-button {
+            background-color: #0c3d60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            padding: 0 20px;
+            font-size: 24px;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js">
+	</script>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js">
+	</script>
+
+	<link href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/ui-lightness/jquery-ui.css"
+		rel="stylesheet" type="text/css" />
+    <title> CAT STIMULATION TRAINER</title>
+</head>
+<body>
+<header>
+        <button class="custom-button" onclick="redirectTo('admin_page')">VISION TEST STIMULATION</button>
+        <button class="custom-button" onclick="redirectTo('admin_home_page')">Add New Model</button>
+        <button class="custom-button" onclick="redirectTo('create_account')">Create Account</button>
+        <button class="custom-button" onclick="redirectTo('reports')">Report</button>
+        <img src="../static/Visteon_wordmark_white.png" alt="Header Image">
+    </header>
+<div class="container">
+    <form action="/edit_models" method="post">
+        <h1>EDIT PAGE</h1>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+            {% endif %}
+        {% endwith %}
+        <label><input type="text" name="messages" id='messages' placeholder="Search here ..." value=""></label>
+        <button type="submit">Submit</button>
+    </form>
+   {{ img }}
+    {% if  img %}
+    <img src="{{ url_for('static', filename='/upload/' + img) }}" alt="" style="margin-bottom: 20px;">
+    <button type="submit" class="edit-button" onclick="redirectTo('update_models')">Update</button>
+    {% endif %}
+    <table>
+        <thead>
+            <tr>
+                <th>NO</th>
+                <th>X</th>
+                <th>Y</th>
+                <th>Description</th>
+                <th>Defect Area</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in result_all %}
+            <tr>
+                <td>{{ result[0] }}</td>
+                <td>{{ result[1] }}</td>
+                <td>{{ result[2] }}</td>
+                <td>{{ result[3] }}</td>
+                <td>{{ result[5] }}</td>
+                <td>
+                    <form method="post" action="/delete_data/{{ result['id'] }}" class="delete-form">
+{#                        <img src="{{ url_for('static', filename='/upload/' + img) }}" alt="">#}
+                        <button type="submit" class="delete-button">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+</table>
+</div>
+<script>
+        function redirectTo(url) {
+            window.location.href = url;
+        }
+        $( function() {
+        var availableTags = [
+            {% for language in languages %}
+                "{{language}}",
+            {% endfor %}
+        ]
+	$( "#messages" ).autocomplete({
+	source: availableTags
+	});
+} );
+    </script>
+
+    </body>
+</html>
